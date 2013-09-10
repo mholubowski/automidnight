@@ -13,11 +13,22 @@ describe "Voice Survey Interface" do
 
   describe "initial call" do
     before(:each) do
+      # Twillio will be making these posts
       post 'route_to_survey'
       @body_hash = hash_from_xml(response.body)
     end
     it "plays welcome message" do
       @body_hash["Response"]["Gather"]["Play"].should include("welcome_property.mp3")
+    end
+    it "properly handles an incorrect property id" do
+      post 'route_to_survey', {"To" => "+15745842979"}
+
+      x = 3
+      x.times { post 'route_to_survey', "Digits" => "12345" }
+      session[:retry_count].should eq(x)
+      # ----
+      x.times { post 'route_to_survey', "Digits" => @property_code }
+      session[:survey].should eq("property")
     end
   end
 

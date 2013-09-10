@@ -8,7 +8,7 @@ namespace :reset do
     def s3_path_for(filename)
       "https://s3-us-west-1.amazonaws.com/south-bend-secrets/#{filename}.mp3"
     end
-    ["neighborhood_comments", "property_comments", "property_outcome", "property_values", "public_safety", "thanks", "welcome_property"].each do |short_name|
+    ["neighborhood_comments", "property_comments", "property_outcome", "property_values", "public_safety", "thanks", "welcome_property", "wrong_property_id"].each do |short_name|
       VoiceFile.create!(short_name: short_name, url: s3_path_for(short_name))
     end
   end
@@ -36,6 +36,9 @@ namespace :reset do
           feedback_type: "numerical_response" }, \
         {voice_text: "Because you entered feedback on a specific property you will have an additional minute to leave voice feedback on that property after the tone. Again all feedback is public.", \
           short_name: "property_comments", \
+          feedback_type: "voice_file" }, \
+          {voice_text: "The property code you entered cannot be found, please try again.", \
+          short_name: "wrong_property_id", \
           feedback_type: "voice_file" } \
       ] )
     Question.all.each do |question|
